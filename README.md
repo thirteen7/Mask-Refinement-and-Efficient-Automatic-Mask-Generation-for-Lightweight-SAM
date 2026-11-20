@@ -1,10 +1,10 @@
-# Rethinking Lightweight SAM
+# Mask Refinement and Efficient Automatic Mask Generation for Lightweight SAM
 
 **Prompt-Adaptive Refinement and Efficient Segment Everything Inference**
 
-[Project page](https://thirteen7.github.io/Rethinking-Lightweight-SAM/) · [Interactive demo](https://huggingface.co/spaces/thirteen7/Rethinking-Lightweight-SAM) · [Models](https://github.com/thirteen7/Rethinking-Lightweight-SAM/releases/tag/v1.0.0) · [Results](docs/results.md) · [中文](README.zh-CN.md)
+[Project page](https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/) · [Interactive demo](https://huggingface.co/spaces/thirteen7/Rethinking-Lightweight-SAM) · [Models](https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/releases/tag/v1.0.0) · [Results](docs/results.md) · [中文](README.zh-CN.md)
 
-Code and models for **Rethinking Lightweight SAM with Prompt-Adaptive Refinement and Efficient Segment Everything Inference**.
+Code and models for **Mask Refinement and Efficient Automatic Mask Generation for Lightweight SAM**.
 
 The refinement interface supports **TinySAM, MobileSAM, and SAM ViT-H**. Each complete checkpoint includes the backbone and six refinement modules: first-click selection, interaction feedback, local residual repair, box selection, an independent box decoder, and an edit comparator.
 
@@ -13,8 +13,8 @@ The refinement interface supports **TinySAM, MobileSAM, and SAM ViT-H**. Each co
 Python 3.10 or later. Install a compatible PyTorch/torchvision build first. Training and dataset evaluation use CUDA; model loading and the interactive API also support CPU.
 
 ```bash
-git clone https://github.com/thirteen7/Rethinking-Lightweight-SAM.git
-cd Rethinking-Lightweight-SAM
+git clone https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM.git
+cd Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM
 pip install -r requirements.txt
 pip install -e . --no-deps
 ```
@@ -111,9 +111,9 @@ for each. See the [Everything interface and protocol](docs/everything.md).
 
 ## Interactive application
 
-[Code](https://github.com/thirteen7/Rethinking-Lightweight-SAM) ·
+[Code](https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM) ·
 [Live demo](https://huggingface.co/spaces/thirteen7/Rethinking-Lightweight-SAM) ·
-[Project page](https://thirteen7.github.io/Rethinking-Lightweight-SAM/)
+[Project page](https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/)
 
 Point and Box use curated annotated images with fixed foreground prompts.
 Run the initial prompt to compare the original and refined decoder outputs.

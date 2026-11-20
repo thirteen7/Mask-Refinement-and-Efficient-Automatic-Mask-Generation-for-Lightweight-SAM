@@ -1,6 +1,6 @@
 {
   "format": "prompt_adaptive_model_index_v1",
-  "repository": "thirteen7/Rethinking-Lightweight-SAM",
+  "repository": "thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM",
   "release": "v1.0.0",
   "models": {
     "tinysam": {

@@ -12,7 +12,7 @@ if local_checkout and not os.environ.get('SPACE_ID'):
     os.environ.setdefault('SAM_DEMO_LOCAL','1')
 if not (PROJECT/'demo/gradio_app.py').is_file():
     subprocess.run(['git','clone','--depth','1',
-        'https://github.com/thirteen7/Rethinking-Lightweight-SAM.git',str(PROJECT)],check=True)
+        'https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM.git',str(PROJECT)],check=True)
 sys.path.insert(0,str(PROJECT))
 from demo.gradio_app import build_demo
 

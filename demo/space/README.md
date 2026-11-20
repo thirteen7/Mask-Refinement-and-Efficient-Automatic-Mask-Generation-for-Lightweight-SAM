@@ -1,5 +1,5 @@
 ---
-title: Rethinking Lightweight SAM
+title: Mask Refinement and Efficient Automatic Mask Generation for Lightweight SAM
 emoji: 🔬
 colorFrom: purple
 colorTo: blue
@@ -11,10 +11,10 @@ pinned: false
 license: other
 ---
 
-# Rethinking Lightweight SAM with Prompt-Adaptive Refinement and Efficient Segment Everything Inference
+# Mask Refinement and Efficient Automatic Mask Generation for Lightweight SAM
 
-[Project page](https://thirteen7.github.io/Rethinking-Lightweight-SAM/) ·
-[Code and models](https://github.com/thirteen7/Rethinking-Lightweight-SAM)
+[Project page](https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/) ·
+[Code and models](https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM)
 
 Press **Run both models** in **Everything** to generate a left-hand **SAM ViT-H / Dense SAM**
 result and a right-hand **FSD-SAM / ViT-H** result, with measured milliseconds for each.
@@ -32,7 +32,7 @@ mask feedback, showing initial decoder outputs, outputs after two positive
 corrections, and true target IoU at every stage. The background-point selector
 has been removed. No custom-image uploads are accepted in Point or Box.
 Curated examples illustrate successful cases; full dataset averages are listed
-separately on the project page. [Comparison protocol](https://github.com/thirteen7/Rethinking-Lightweight-SAM/blob/main/docs/showcase.md).
+separately on the project page. [Comparison protocol](https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/blob/main/docs/showcase.md).
 
 **Everything** keeps image uploads, opacity controls and an FSD instance inventory.
 The **How FSD works** tab animates both paths with playback controls. Animation

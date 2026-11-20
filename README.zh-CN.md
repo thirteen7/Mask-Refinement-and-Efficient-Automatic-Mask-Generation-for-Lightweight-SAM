@@ -1,8 +1,8 @@
-# Rethinking Lightweight SAM
+# Mask Refinement and Efficient Automatic Mask Generation for Lightweight SAM
 
-[English](README.md) · [项目主页](https://thirteen7.github.io/Rethinking-Lightweight-SAM/) · [交互演示](https://huggingface.co/spaces/thirteen7/Rethinking-Lightweight-SAM) · [模型下载](https://github.com/thirteen7/Rethinking-Lightweight-SAM/releases/tag/v1.0.0)
+[English](README.md) · [项目主页](https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/) · [交互演示](https://huggingface.co/spaces/thirteen7/Rethinking-Lightweight-SAM) · [模型下载](https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/releases/tag/v1.0.0)
 
-论文 **Rethinking Lightweight SAM with Prompt-Adaptive Refinement and Efficient Segment Everything Inference** 的提示自适应精化代码与模型。
+论文 **Mask Refinement and Efficient Automatic Mask Generation for Lightweight SAM** 的提示自适应精化代码与模型。
 
 支持 **TinySAM、MobileSAM、SAM ViT-H**。每个模型只需一份完整 `.pth`，包含官方基座、首点选择、交互反馈、局部残差、框选择、独立框解码器和编辑比较器。
 
@@ -11,8 +11,8 @@
 Python 3.10+。先安装匹配的 PyTorch/torchvision；训练和数据集评估需要 CUDA，模型加载及交互 API 支持 CPU。
 
 ```bash
-git clone https://github.com/thirteen7/Rethinking-Lightweight-SAM.git
-cd Rethinking-Lightweight-SAM
+git clone https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM.git
+cd Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM
 pip install -r requirements.txt
 pip install -e . --no-deps
 ```
@@ -104,7 +104,7 @@ python generate.py --checkpoint weights/tinysam_prompt_adaptive_v1.pth --image e
 
 Everything 保留图片上传，固定左侧 SAM ViT-H / Dense、右侧 FSD-SAM / ViT-H，一次运行两条路径并分别显示真实毫秒耗时。流程动画独立于推理计时。
 
-[代码](https://github.com/thirteen7/Rethinking-Lightweight-SAM) · [在线 Demo](https://huggingface.co/spaces/thirteen7/Rethinking-Lightweight-SAM) · [项目网页](https://thirteen7.github.io/Rethinking-Lightweight-SAM/)
+[代码](https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM) · [在线 Demo](https://huggingface.co/spaces/thirteen7/Rethinking-Lightweight-SAM) · [项目网页](https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/)
 
 本地 PowerShell 运行：
 

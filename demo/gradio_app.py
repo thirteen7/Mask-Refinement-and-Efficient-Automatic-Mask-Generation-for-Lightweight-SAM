@@ -14,7 +14,7 @@ from urllib.parse import urlencode, urlsplit
 
 DEVICE = os.environ.get('SAM_DEMO_DEVICE', 'cuda')
 ANIMATION_URL = os.environ.get('SAM_DEMO_ANIMATION_URL',
-    'https://thirteen7.github.io/Rethinking-Lightweight-SAM/assets/fsd-animation.html')
+    'https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/assets/fsd-animation.html')
 if DEVICE == 'cuda' and os.environ.get('SAM_DEMO_LOCAL') != '1':
     import spaces  # Initialize ZeroGPU before torch.
     gpu = spaces.GPU
@@ -288,8 +288,8 @@ def build_demo(project):
     gallery_rows = [row for row in records['examples'] if row.get('foreground_demo')]
     default_image = np.asarray(Image.open(project/'site/assets/examples/fruit.jpg').convert('RGB'))
     default_state = empty_state(default_image)
-    title = 'Rethinking Lightweight SAM with Prompt-Adaptive Refinement and Efficient Segment Everything Inference'
-    header = '<div class="studio-header"><div><span class="studio-eyebrow">RESEARCH STUDIO</span><h1>'+title+'</h1><p>Compare the same prompt on both models, then add corrections one point at a time.</p><div class="studio-links"><a href="https://github.com/thirteen7/Rethinking-Lightweight-SAM" target="_blank" rel="noopener">Code ↗</a><a href="https://thirteen7.github.io/Rethinking-Lightweight-SAM/" target="_blank" rel="noopener">Project page ↗</a></div></div><div class="studio-summary"><span class="studio-summary-label">ONE IMAGE / TWO PATHS</span><div><b>Point &amp; Box</b><span>Initial → +1 point → +2 points</span></div><div><b>Everything</b><span>ViT-H / FSD-SAM · measured ms</span></div></div></div>'
+    title = 'Mask Refinement and Efficient Automatic Mask Generation for Lightweight SAM'
+    header = '<div class="studio-header"><div><span class="studio-eyebrow">RESEARCH STUDIO</span><h1>'+title+'</h1><p>Compare the same prompt on both models, then add corrections one point at a time.</p><div class="studio-links"><a href="https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM" target="_blank" rel="noopener">Code ↗</a><a href="https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/" target="_blank" rel="noopener">Project page ↗</a></div></div><div class="studio-summary"><span class="studio-summary-label">ONE IMAGE / TWO PATHS</span><div><b>Point &amp; Box</b><span>Initial → +1 point → +2 points</span></div><div><b>Everything</b><span>ViT-H / FSD-SAM · measured ms</span></div></div></div>'
     source = urlsplit(ANIMATION_URL)
     origin = json.dumps(source.scheme+'://'+source.netloc)
     js = """() => {
@@ -364,7 +364,7 @@ def build_demo(project):
             with gr.Tab('How FSD works'):
                 gr.Markdown('Follow the same two-dimensional grid through encoding, preview selection and mask completion. After an Everything run, this diagram uses the actual points selected on your image.',elem_id='flow-introduction')
                 diagram = gr.HTML(fsd_walkthrough(),elem_id='fsd-workspace')
-        gr.HTML('<div class="studio-footer"><b>'+title+'</b><a href="https://github.com/thirteen7/Rethinking-Lightweight-SAM/blob/main/docs/results.md" target="_blank" rel="noopener">Paper results ↗</a></div>')
+        gr.HTML('<div class="studio-footer"><b>'+title+'</b><a href="https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/blob/main/docs/results.md" target="_blank" rel="noopener">Paper results ↗</a></div>')
         outputs = [session,image,original,refined,status,stats,table,selected,diagram,pair_left,pair_right,times,pair_details,point_scores,
             stage_title,add_first,add_second,button,previous_result,next_result,correction_actions,every_controls,point_controls,inspector,prompt_group,pair_group,model,curated_gallery,every_gallery]
 
