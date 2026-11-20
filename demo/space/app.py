@@ -19,4 +19,4 @@ from demo.gradio_app import build_demo
 logging.basicConfig(level=logging.INFO,format='%(asctime)s %(levelname)s %(message)s')
 demo = build_demo(PROJECT)
 if __name__=='__main__':
-    demo.launch(server_name='0.0.0.0',server_port=int(os.environ.get('PORT','7860')),show_error=True)
+    demo.launch(server_name='0.0.0.0',server_port=int(os.environ.get('PORT','7860')),show_error=True,ssr_mode=False)
