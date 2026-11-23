@@ -21,7 +21,6 @@ annotation metadata and in `examples.json`.
 | Bed in a hotel room · COCO image 329080 | [Flickr photograph 8596784421](https://www.flickr.com/photo.gne?id=8596784421) · [source JPEG](https://farm9.staticflickr.com/8092/8596784421_bdf8db0742_z.jpg) | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) |
 
 Giraffe example visualizations retain the photograph's CC BY-NC-SA 2.0 terms.
-Prediction manifests record the complete checkpoint fingerprints. Display
-examples are curated qualitative results, separate from dataset-average metrics.
+Prediction manifests record the checkpoint fingerprints for the curated examples.
 
 | Black bear · COCO image 110972 | [Original photograph](http://farm9.staticflickr.com/8033/8046866985_abdbd7f0da_z.jpg) | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) |

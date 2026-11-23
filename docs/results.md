@@ -1,8 +1,8 @@
 # Evaluation results
 
-Values are transcribed from the supplied manuscript, `main.pdf`, Tables 1, 3, 5–7 (pages 11–14). Initial means one foreground center click or one GT box; +1/+2 mean cumulative corrective clicks. All interaction values are instance-averaged legacy IoU (%). Differences are copied from the paper, which calculates them before rounding. **† Historical original-model figures:** MobileSAM on SA-11K (and ViT-H on LVIS/SA-11K in the full results) are reference comparisons, not newly matched controls; see manuscript Appendix E.
+Interaction results report instance-averaged legacy IoU (%). The initial prompt is a foreground click at the mask center or a ground-truth box; +1/+2 add one or two corrective clicks. Gains use unrounded values. **† Historical baselines:** MobileSAM on SA-11K and SAM ViT-H on LVIS and SA-11K.
 
-Fitting, calibration and checkpoint selection use SA-1B training data only. COCO covers 4,952 annotated images / 36,335 targets; LVIS covers 19,626 valid images / 244,707 targets. The released SA-1B cap64 path covers 11,186 images / 618,098 targets. Reported baseline provenance follows Appendix E; these figures do not constitute a new evaluation.
+Fitting, calibration and checkpoint selection use SA-1B training data. COCO covers 4,952 annotated images / 36,335 targets; LVIS covers 19,626 valid images / 244,707 targets. The SA-11K cap64 evaluation covers 11,186 images / 618,098 targets.
 
 ## Point prompts
 
@@ -62,33 +62,28 @@ The bars compare the initial prompt; the adjacent columns show gains at all thre
 | SAM ViT-H / Hierarchical | 2,966 | 2.05× | 46.093 | -2.228 | 60.189 | 59.607 | 381.5 |
 | SAM ViT-H / FSD-SAM | 3,043 | 1.99× | 48.237 | -0.085 | 62.043 | 61.561 | 352.4 |
 
-COCO100: the 100 COCO val2017 images with the smallest IDs and 709 non-crowd instances. NVIDIA RTX 5060 Ti, FP32, 32 × 32 grid, 64 prompts/batch. Speedup and ΔAR are relative to Dense on the same backbone and use unrounded source values. After three warm-ups per image, each image is timed three times, with quality from the first timed run. CUDA-synchronized end-to-end generation includes encoding and mask processing. Image reading, model loading, compilation, warm-up, disk writes and GT evaluation are excluded. Paper seconds are converted to milliseconds. These dataset averages are separate from the live demo’s measurements.
+COCO100 uses the 100 COCO val2017 images with the smallest IDs and 709 non-crowd instances. NVIDIA RTX 5060 Ti, FP32, 32 × 32 grid, 64 prompts/batch. Speedup and ΔAR are relative to Dense on the same backbone and use unrounded values. Three warm-up passes precede three timed runs per image; the first timed run supplies the quality metrics. CUDA-synchronized timing starts at image encoding and ends after mask filtering, NMS and run-length encoding.
 
 ## Source
 
-Displayed interaction values use the paper’s two decimal places. Automatic mask generation values follow the current manuscript’s COCO100 table. [Machine-readable interaction values](../site/benchmarks.json) · [Machine-readable COCO100 results](../site/paper-everything.json). Curated image IoUs are recomputed against their own target annotations and are separate from these aggregate values.
+[Machine-readable interaction results](../site/benchmarks.json) · [Machine-readable COCO100 results](../site/paper-everything.json) · [Gallery annotations and per-image IoU](showcase.md).
 
 The PNG and SVG figures are generated from `site/benchmarks.json` (interaction) and `site/paper-everything.json` (timing). With matplotlib installed, run `python docs/figures/plot_prompt_results.py` or `python docs/figures/plot_everything_time.py`. The interaction figures share a 0–100 IoU axis and 0–12 pp gain color scale; the timing figure starts at 0 ms.
 
-## TinySAM LVIS acceptance addendum
+## TinySAM LVIS data correction
 
-The original full inference exited successfully. Its original CPU acceptance
-failed on one stored second-round point IoU: image 195271, annotation 94187,
-value 1.2310324907302856. The original failed ledger/cache were preserved.
-One bounded replay used the same frozen model and previous-image RNG state.
-The other 134 point IoUs, all 135 candidate choices and final point RNG matched
-exactly. GPU/CPU intersection 2158 and union 2323 agreed; the valid stored value
-is 0.9289711713790894. An additive, single-value correction passed full CPU
-coverage/range/order/reaggregation acceptance. The exact trigger of the original
-out-of-range value was not reproduced or identified. No clamping, target
-deletion or full GPU rerun was performed.
+For image 195271, annotation 94187, a targeted replay replaced the stored
+second-round point IoU of 1.2310324907302856 with 0.9289711713790894. CPU and GPU
+agree on intersection 2158 and union 2323. The replay used the same frozen model
+and previous-image RNG state and reproduced the other 134 point IoUs, all 135
+candidate choices and the final point RNG state. The corrected ledger passed CPU
+coverage, range, order and reaggregation checks. The original ledger and cache
+preserve the out-of-range entry; its cause remains undetermined.
 
 ## TinySAM COCO1000 structure ablation
 
-1,000 fixed validation images / 7,179 targets. The table uses server controls
-for server module effects. Local/server numerical differences are preserved;
-all gains are matched to a baseline on the same execution host. These results
-do not isolate the causal effect of the encoding change alone.
+The ablation compares module configurations on 1,000 fixed validation images
+and 7,179 targets. Each gain uses the same-host control for the configuration.
 
 | Prompt / configuration | Round 1 | Round 2 | Round 3 |
 |---|---:|---:|---:|
@@ -102,7 +97,8 @@ do not isolate the causal effect of the encoding change alone.
 | Box / independent decoder | 76.411 | 77.880 | 78.545 |
 | Box / full | 76.601 | 77.915 | 78.549 |
 
-The isolated feedback path has a negative third-round effect. In the full box
-trajectory, the final gain over the independent decoder is only +0.003 pp.
-On the full model's *same candidate pool*, the final region-selected result is
-0.027 pp below independent-native selection; these are different comparisons.
+The full point configuration reaches 69.556 IoU at round 3, compared with
+61.677 for first-click selection plus feedback. For box prompts, the full
+trajectory gains 0.003 pp over the independent decoder at round 3. Within the
+full model’s candidate pool, region selection scores 0.027 pp below
+independent-native selection.

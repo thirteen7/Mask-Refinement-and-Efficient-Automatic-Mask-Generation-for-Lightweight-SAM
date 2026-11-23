@@ -44,7 +44,7 @@ def empty_state(image=None):
 def fsd_walkthrough(details=None, *, image=None, dense_details=None, overlays=None):
     """Show actual prompt coordinates and retained requests from this run."""
     if details and details.get('method')=='dense':
-        return '<div class="dense-walkthrough"><span>DENSE SAM / NATIVE PATH</span><h2>Complete every request.</h2><p>Image encoding → independent point prompts → full native decoding → SAM filters &amp; NMS</p><b>'+str(int(details['native_points']))+' / '+str(int(details['total_points']))+' completed requests</b><p>Dense SAM completes every sampled prompt. It does not use FSD selection.</p></div>'
+        return '<div class="dense-walkthrough"><span>DENSE SAM / NATIVE PATH</span><h2>Complete every sampled prompt.</h2><p>Image encoding → independent point prompts → full native decoding → SAM filters &amp; NMS</p><b>'+str(int(details['native_points']))+' / '+str(int(details['total_points']))+' completed requests</b></div>'
     url = ANIMATION_URL
     attributes = ''
     if details is not None:
@@ -153,7 +153,7 @@ def pair_metrics(pair=None):
         cards.append(f'<div><span>{title}</span><strong>{row["total_ms"]:,.1f} <small>ms</small></strong><p>{row["info"]["masks"]} masks · {row["info"]["native_points"]} / {row["info"]["total_points"]} completed requests</p><p>Encode {row["encoding_ms"]:,.1f} ms + masks {row["generation_ms"]:,.1f} ms</p></div>')
     delta = pair['results']['dense']['total_ms']-pair['results']['fsd']['total_ms']
     difference = f'FSD-SAM uses {abs(delta):,.1f} ms '+('less' if delta>=0 else 'more')+' on this run'
-    return '<div class="pair-times">'+''.join(cards)+'</div><div class="pair-scope">'+difference+' · '+html.escape(pair['device'])+' · FP32<br>Same frozen ViT-H, image, grid and filters. Encoding + mask generation; loading, warm-up, queue and overlay rendering excluded.</div>'
+    return '<div class="pair-times">'+''.join(cards)+'</div><div class="pair-scope">'+difference+' · '+html.escape(pair['device'])+' · FP32<br>Each total covers image encoding and mask generation. Both paths share ViT-H weights, input, grid and filters.</div>'
 
 
 def comparison_views(state, opacity=.48):
@@ -212,8 +212,6 @@ def run_workspace(state, model, mode, grid, opacity):
         if mode!='Everything':
             if not state.get('curated_trajectory') or state.get('curated_model')!=model.lower() or state.get('curated_mode')!=mode.lower():
                 raise gr.Error('Select a curated point/box example first.')
-            # The first run contains only the initial prompt. Corrections are
-            # separate callbacks, so future prompts cannot leak into this view.
             state = dict(state)
             prompt = state['curated_trajectory'][0]
             pair = compute_prompt_comparison(state,model.lower(),prompt)
@@ -265,7 +263,7 @@ def browse_workspace(state, offset):
         raise gr.Error('Run the initial comparison before browsing saved results.')
     index = int(state.get('prompt_stage',len(pair['stages'])-1))+offset
     if not 0<=index<len(pair['stages']):
-        raise gr.Error('Only completed prompt stages can be viewed.')
+        raise gr.Error('Run the prompt stage before opening its result.')
     row = pair['stages'][index]
     return dict(state,prompt_stage=index,points=copy.deepcopy(row['points']),box=copy.deepcopy(row['box']))
 
@@ -275,8 +273,7 @@ def paper_results(project):
     lines = [
         '## FSD-SAM on COCO100',
         '',
-        'TinySAM, MobileSAM and SAM ViT-H each compare Dense, Hierarchical and FSD-SAM. '
-        'The live studio separately compares Dense and FSD-SAM on SAM ViT-H for the current image.',
+        'Dense, Hierarchical and FSD-SAM compared on TinySAM, MobileSAM and SAM ViT-H.',
         '',
         '| Backbone / method | ms/image | Speedup | AR@300 (%) | ΔAR (pp) | Best IoU (%) | 1-to-1 IoU (%) | Points completed |',
         '| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |',

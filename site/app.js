@@ -118,7 +118,7 @@ async function renderExample() {
   $("#refined-canvas").setAttribute("aria-label","Refined model mask and prompts");
   $("#example-metric-note").textContent = "Measured legacy IoU · curated example";
   $("#trajectory-heading").textContent = "SAME PROMPT / MEASURED IoU";
-  $(".explorer-note").textContent = "Curated foreground-only prompts. Original and refined models receive identical clicks and keep independent mask feedback. IoU is measured against the annotated target; these examples illustrate successful cases.";
+  $(".explorer-note").textContent = "Compare original and refined masks on curated foreground prompts. Both methods receive the same clicks and preserve their own mask history. IoU uses the annotated target.";
   const sample = records.examples.find(item => item.id === state.example);
   const trajectory = sample.trajectories[state.model][state.prompt];
   const round = trajectory[state.round - 1];
@@ -355,7 +355,7 @@ async function enableLive() {
   $("#reset-prompts").addEventListener("click", () => resetLive().catch(error => toast(error.message)));
 }
 async function start() {
-  [records, benchmarks, manifest, config, everything, everyComparison, paperTiming] = await Promise.all([json("examples.json"), json("benchmarks.json"), json("models.json"), json("config.json"), json("everything.json"), json("every-comparison.json"), json("paper-everything.json?v=fsd-coco100")]);
+  [records, benchmarks, manifest, config, everything, everyComparison, paperTiming] = await Promise.all([json("examples.json"), json("benchmarks.json?v=refinement-fsd"), json("models.json"), json("config.json"), json("everything.json"), json("every-comparison.json"), json("paper-everything.json?v=fsd-coco100")]);
   const parameters = new URLSearchParams(location.search);
   if (parameters.get("embed") === "showcase") document.body.classList.add("embedded-explorer");
   if (["tinysam","mobilesam"].includes(parameters.get("model"))) state.model=parameters.get("model");
@@ -404,7 +404,7 @@ async function renderEverything(version) {
     const row = pair.results[method];
     return `<div class="trajectory-value"><span>${method === "dense" ? "SAM ViT-H" : "FSD-SAM"}</span><b>${state.pairShown ? row.total_ms.toFixed(1)+" ms" : "Ready"}</b><small>${state.pairShown ? `${row.info.masks} masks · ${row.info.native_points}/${row.info.total_points} completed` : "Press Show comparison"}</small></div>`;
   }).join("");
-  $("#every-comparison-note").textContent = state.pairShown ? `Measured image encoding (${pair.results.dense.encoding_ms.toFixed(1)} ms) is counted in both totals; queue, warm-up, loading and overlay rendering are excluded. This recorded demo is not a benchmark speedup claim.` : "Recorded real inference. Run both models in the live demo for new measurements.";
+  $("#every-comparison-note").textContent = state.pairShown ? `For this recorded image, each total adds shared encoding (${pair.results.dense.encoding_ms.toFixed(1)} ms) to that method’s mask generation time.` : "Open the recorded comparison, or run both methods on an image in the live demo.";
   for (const [field,method] of [["reference","dense"],["refined","fsd"]]) {
     const photo = await image(state.pairShown ? pair.results[method].overlay : pair.image);
     if(version !== renderVersion)return;

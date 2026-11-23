@@ -53,7 +53,7 @@ def main():
     parser.add_argument('--data-root',type=Path,required=True)
     parser.add_argument('--output',type=Path,default=Path('runs/evaluate'))
     parser.add_argument('--gpu',default='0')
-    parser.add_argument('--max-images',type=int,help='Optional smoke subset, marked explicitly')
+    parser.add_argument('--max-images',type=int,help='Number of images for a smoke check')
     parser.add_argument('--splits',type=Path,default=HERE/'configs/sa1b_splits.json')
     parser.add_argument('--dry-run',action='store_true',help='Check image/annotation coverage without inference')
     cli=parser.parse_args()

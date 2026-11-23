@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "prompt-adaptive-sam"
 version = "1.0.0"
-description = "Prompt-adaptive refinement for lightweight SAM models"
+description = "Point and box mask refinement and FSD-SAM automatic mask generation for SAM backbones"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "S-Lab License 1.0"}

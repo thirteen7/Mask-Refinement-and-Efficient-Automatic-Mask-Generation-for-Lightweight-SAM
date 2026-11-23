@@ -16,35 +16,19 @@ license: other
 [Project page](https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/) ·
 [Code and models](https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM)
 
-**Paper results** shows the COCO100 benchmark for TinySAM, MobileSAM and SAM ViT-H,
-each with Dense, Hierarchical and FSD-SAM. See the [same benchmark on the project page](https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/#fsd-results).
-Its dataset averages are separate from the live ViT-H measurements below.
+**Point & Box:** Compare original and refined TinySAM or MobileSAM on four
+annotated examples. Run the initial prompt, then add **+1 point** and **+2 points**
+in order. Each stage shows both masks and target IoU. [Comparison protocol](https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/blob/main/docs/showcase.md).
 
-Press **Run both models** in **Everything** to generate a left-hand **SAM ViT-H / Dense SAM**
-result and a right-hand **FSD-SAM / ViT-H** result, with measured milliseconds for each.
-Both paths use the same frozen ViT-H weights, input image, sampling grid, FP32 precision,
-and native quality, stability and NMS thresholds. There is no generator dropdown.
-The totals include the same measured image encoding time plus each mask-generation time.
-CUDA is synchronized around timing. Warm-up, model loading, the ZeroGPU queue and
-overlay rendering are excluded. Repeated runs alternate execution order.
-These are demo measurements on the current device, not the paper's fused-kernel benchmark.
+**Everything:** Upload an image or choose an example, then press **Run both models**.
+The studio compares Dense and FSD-SAM on the same frozen SAM ViT-H, with shared
+input, grid and native filters. Inspect the masks, predicted IoU and measured
+encoding-plus-generation times. The portable PyTorch demo runs on ZeroGPU and
+stores uploads and predictions in a temporary cache.
 
-Choose TinySAM or MobileSAM for **Point** or **Box**. These modes use only four
-curated annotated examples: black bear, elephant, bottle and bed. One Run
-executes both models with the same fixed foreground prompts and independent
-mask feedback, showing initial decoder outputs, outputs after two positive
-corrections, and true target IoU at every stage. The background-point selector
-has been removed. No custom-image uploads are accepted in Point or Box.
-Curated examples illustrate successful cases; full dataset averages are listed
-separately on the project page. [Comparison protocol](https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/blob/main/docs/showcase.md).
+**How FSD works:** Play or step through the grid, selection waves and mask completion.
 
-**Everything** keeps image uploads, opacity controls and an FSD instance inventory.
-The **How FSD works** tab animates both paths with playback controls. Animation
-duration is separate from measured inference time. Inference runs on ZeroGPU;
-uploads and predictions use a temporary cache.
-
-Everything uses the portable PyTorch decoder and fixed native SAM filters.
-Colors represent instances, not semantic classes. Uploaded images have no
-measured ground-truth IoU score.
+**Paper results:** Compare Dense, Hierarchical and FSD-SAM on COCO100 for
+TinySAM, MobileSAM and SAM ViT-H. [View the benchmark on the project page](https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/#fsd-results).
 
 License: see the project's LICENSE and NOTICE.

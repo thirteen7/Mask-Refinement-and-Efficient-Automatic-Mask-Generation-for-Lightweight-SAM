@@ -37,7 +37,7 @@
       <button class="node" data-stage="5" style="grid-area:masks" aria-pressed="false"><span class="node-top"><span class="number">06</span><span class="badge" id="mask-count">INSTANCES</span></span><b>Filter & deduplicate</b><span class="sub">SAM quality · stability · NMS</span><span class="mark mask-shapes" aria-hidden="true"><i></i><i></i><i></i></span></button>
     </div>
     <div class="detail" aria-live="polite"><div class="detail-label"><span id="detail-title">04 / RETAIN USEFUL REQUESTS</span><span>CLICK TO EXPLORE</span></div><p id="detail-text"></p></div>
-    <div class="footer"><span>Diagram explains the computation.<br><strong>Instance masks remain available in the result view.</strong></span><span>No prompt merging<br>No added quality head</span></div>
+    <div class="footer"><span>Follow the decoding stages.<br><strong>Inspect instance masks in the result view.</strong></span><span>Independent prompt states<br>Native SAM scoring</span></div>
   </main>
   <script>
     const query=new URLSearchParams(location.search);
@@ -49,7 +49,7 @@
     if(masks!==null)document.querySelector('#mask-count').textContent=masks+' INSTANCES';
     const details=[
       'Encode the image once. Cache image-dependent projected terms that can be reused across independent point prompts.',
-      'Compute complete factors for every point, including token-to-image and image-to-token attention. Requests retain their own state; prompts are not merged.',
+      'Compute complete factors and bidirectional attention for each point, preserving its independent prompt state.',
       'Read the native phase-(0, 0) preview and a local patch around each point. These provide early geometric and coverage evidence before full suffix completion.',
       known?'Four selection waves retain '+native+' of '+total+' requests for this recorded run.'+(guard!==null?' The local small-region guard contributes '+guard+' protected requests.':'')+' Selection is approximate.':'Four selection waves retain requests using preview evidence and spatial coverage. A local guard protects small regions. Selection is approximate.',
       'Reconstruct each retained request from its stored factors. Complete the original decoder suffix and produce the three public SAM candidate masks.',

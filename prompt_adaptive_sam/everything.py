@@ -14,12 +14,11 @@ from ._everything.selection import gpu_summary, evidence_from_summaries, select
 
 
 class EverythingGenerator:
-    """All prompts are independent positive clicks; no annotation is required.
+    """Generate instance masks using a grid of independent foreground prompts.
 
-    FSD-SAM uses the portable factorized decoder, native phase-(0,0) previews,
-    four-wave selection and the local small-region guard. Native suffixes
-    restore retained requests. This interface does not use the extra
-    point/box refinement modules or claim the fused-kernel benchmark timings.
+    The portable FSD-SAM decoder shares image-dependent factors, computes native
+    phase-(0,0) previews, and selects prompts with four waves and a local
+    small-region guard. The native decoder suffix completes retained prompts.
     """
     def __init__(self, predictor, *, points_per_side=16, method='fsd',
                  points_per_batch=32, pred_iou_thresh=.88,

@@ -70,7 +70,7 @@ def create_app(device='cpu', weights=None):
     models = {}
     sessions = OrderedDict()
     index = json.loads((ROOT / 'models.json').read_text(encoding='utf-8'))
-    app = FastAPI(title='Rethinking Lightweight SAM', docs_url=None, redoc_url=None)
+    app = FastAPI(title='Mask Refinement and Efficient Automatic Mask Generation for Lightweight SAM', docs_url=None, redoc_url=None)
     torch.set_num_threads(2)
 
     def get_session(session_id):

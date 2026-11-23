@@ -1,12 +1,10 @@
 # Mask Refinement and Efficient Automatic Mask Generation for Lightweight SAM
 
-**Prompt-Adaptive Refinement and Efficient Segment Everything Inference**
-
 [Project page](https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/) · [Interactive demo](https://huggingface.co/spaces/thirteen7/Rethinking-Lightweight-SAM) · [Models](https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/releases/tag/v1.0.0) · [Results](docs/results.md) · [中文](README.zh-CN.md)
 
-Code and models for **Mask Refinement and Efficient Automatic Mask Generation for Lightweight SAM**.
+**Mask refinement** improves point- and box-prompted segmentation. **FSD-SAM** speeds up automatic mask generation by sharing image-dependent computation and completing decoding at selected grid points. Both workflows use frozen SAM backbones.
 
-The refinement interface supports **TinySAM, MobileSAM, and SAM ViT-H**. Each complete checkpoint includes the backbone and six refinement modules: first-click selection, interaction feedback, local residual repair, box selection, an independent box decoder, and an edit comparator.
+Use **TinySAM, MobileSAM, or SAM ViT-H**. Each complete checkpoint includes the backbone and six refinement modules: first-click selection, interaction feedback, local residual repair, box selection, an independent box decoder, and an edit comparator.
 
 ## Installation
 
@@ -36,11 +34,11 @@ Checkpoints are saved to `weights/`. The downloader verifies SHA256 and automati
 python evaluate.py --model tinysam --checkpoint weights/tinysam_prompt_adaptive_v1.pth --dataset coco --data-root datasets/coco --output runs/tinysam-coco
 ```
 
-Select `lvis` or `sa1b` with `--dataset`, and choose a GPU with `--gpu 1`. Use `--dry-run` to inspect data coverage or `--max-images 1` for an explicitly limited check.
+Select `lvis` or `sa1b` with `--dataset`, and choose a GPU with `--gpu 1`. Use `--dry-run` to inspect data coverage or `--max-images 1` for a one-image check.
 
 Evaluation uses ordinary **legacy mIoU**, a mask-center first click, three point/box interaction rounds, and chunks of 64 objects. COCO/LVIS include all valid validation images and non-crowd targets. SA-1B uses the official cap64 reader: sampling without replacement, seeded by the original image index. Ground truth generates initial prompts, simulated corrective clicks, and IoU scores.
 
-Outputs include `summary.json`, per-target numerical records, logs, and `verified.json`. Dataset evaluation does not save prediction images or masks.
+Dataset evaluation writes `summary.json`, per-target numerical records, logs, and `verified.json`. Use `generate.py` for mask files and overlays.
 
 ```text
 datasets/coco/
@@ -57,7 +55,7 @@ A merged `coco/trainval/` image directory is also supported. LVIS evaluation use
 
 ## Train and export
 
-Fitting, calibration, and checkpoint selection use **SA-1B train only**. The fixed 3,500-image manifest defines disjoint 2,900/300/300 partitions. First-click fitting uses 1,500 images; later decoder/comparator stages use 256/64/32 images. External validation labels are excluded from training.
+Fitting, calibration, and checkpoint selection use **SA-1B training data**. The fixed 3,500-image manifest defines disjoint 2,900/300/300 partitions. First-click fitting uses 1,500 images; later decoder/comparator stages use 256/64/32 images.
 
 ```bash
 python prepare_data.py --source datasets/sa1b --output datasets/sa1b_train3500
@@ -136,7 +134,7 @@ See [demo/README.md](demo/README.md) for deployment.
 
 ## Results
 
-Values are transcribed from the supplied manuscript, `main.pdf`, Tables 1, 3, 5–7 (pages 11–14). Initial means one foreground center click or one GT box; +1/+2 mean cumulative corrective clicks. All interaction values are instance-averaged legacy IoU (%). Differences are copied from the paper, which calculates them before rounding. **† Historical original-model figures:** MobileSAM on SA-11K (and ViT-H on LVIS/SA-11K) are reference comparisons, not newly matched controls; see manuscript Appendix E.
+Interaction results report instance-averaged legacy IoU (%). The initial prompt is a foreground click at the mask center or a ground-truth box; +1/+2 add one or two corrective clicks. Gains use unrounded values. **† Historical baselines:** MobileSAM on SA-11K and SAM ViT-H on LVIS and SA-11K.
 
 ### Point prompts: initial and after correction
 
@@ -193,7 +191,7 @@ The bars compare the initial prompt; the adjacent columns show gains at all thre
 | SAM ViT-H / Dense | 6,067 | 1.00× | 48.322 | +0.000 |
 | SAM ViT-H / FSD-SAM | 3,043 | 1.99× | 48.237 | -0.085 |
 
-COCO100: 100 COCO val2017 images / 709 targets, NVIDIA RTX 5060 Ti, FP32, 32 × 32 grid, 64 prompts/batch. Speedup and ΔAR are relative to Dense on the same backbone. These benchmark averages are separate from live demo timings.
+On COCO100, FSD-SAM speeds up MobileSAM by **2.97×** while matching its Dense AR@300 of **33.935%**. The benchmark uses 100 COCO val2017 images, 709 targets, an NVIDIA RTX 5060 Ti, FP32, a 32 × 32 grid, and 64 prompts per batch. Speedup and ΔAR are relative to Dense on the same backbone.
 
 The [full COCO100 table](docs/results.md#segment-everything-timing) includes Hierarchical, both IoU metrics and completed points.
 

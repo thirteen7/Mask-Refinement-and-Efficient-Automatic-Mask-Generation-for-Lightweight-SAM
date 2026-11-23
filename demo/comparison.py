@@ -67,7 +67,7 @@ def _append_prompt_stage(predictor, name, prompt, truth, previous_pair=None):
     points = [[p['x'], p['y']] for p in prompt['points']]
     labels = [p['label'] for p in prompt['points']]
     if any(label != 1 for label in labels):
-        raise ValueError('The curated demo supports foreground prompts only.')
+        raise ValueError('Choose a foreground point for the curated demo.')
     box = prompt.get('box')
     mode = 'box' if box is not None else 'point'
     baseline, baseline_previous, base_choice = original_prediction(
@@ -87,11 +87,11 @@ def _append_prompt_stage(predictor, name, prompt, truth, previous_pair=None):
 
 @torch.inference_mode()
 def compare_prompt_stage(template, name, image, prompt, truth, previous_pair=None):
-    """Decode just the newly requested stage, with independent CPU mask feedback.
+    """Decode the requested stage with independent CPU mask feedback.
 
-    No later prompts are decoded until the visitor adds another point. Image
-    encoding is recreated inside the GPU callback, so session state never keeps
-    a GPU tensor between requests. Ground truth is used only to report IoU.
+    Each click triggers its own decoding step. The GPU callback computes the
+    image embedding, and the session stores mask feedback on CPU. Ground truth
+    supplies the reported target IoU.
     """
     predictor = copy.copy(template)
     predictor.set_image(image)

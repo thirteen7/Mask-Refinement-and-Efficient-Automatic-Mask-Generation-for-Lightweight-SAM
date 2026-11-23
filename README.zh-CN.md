@@ -2,9 +2,9 @@
 
 [English](README.md) · [项目主页](https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/) · [交互演示](https://huggingface.co/spaces/thirteen7/Rethinking-Lightweight-SAM) · [模型下载](https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/releases/tag/v1.0.0)
 
-论文 **Mask Refinement and Efficient Automatic Mask Generation for Lightweight SAM** 的提示自适应精化代码与模型。
+**掩码精化**提升点提示和框提示的分割质量。**FSD-SAM** 复用与图像相关的计算，并选择部分网格点完成解码，加速自动掩码生成。两条流程都使用冻结的 SAM 骨干。
 
-支持 **TinySAM、MobileSAM、SAM ViT-H**。每个模型只需一份完整 `.pth`，包含官方基座、首点选择、交互反馈、局部残差、框选择、独立框解码器和编辑比较器。
+支持 **TinySAM、MobileSAM、SAM ViT-H**。每份完整 `.pth` 包含官方骨干和六个精化模块：首点选择、交互反馈、局部残差修正、框选择、独立框解码器和编辑比较器。
 
 ## 1. 安装
 
@@ -17,7 +17,7 @@ pip install -r requirements.txt
 pip install -e . --no-deps
 ```
 
-建议复现实验时使用 PyTorch 2.0.0 / torchvision 0.15.1，并固定 CUDA、硬件与依赖版本。不同主机与版本可能产生数值差异。
+复现实验时使用 PyTorch 2.0.0 / torchvision 0.15.1，并固定 CUDA、硬件与依赖版本。
 
 ## 2. 下载一份模型
 
@@ -26,7 +26,7 @@ python download_models.py --model tinysam
 # 其它模型：--model mobilesam / vith；全部：--model all
 ```
 
-文件保存在 `weights/`。ViT-H 的传输文件自动拼回一份完整 `.pth`，不改变参数精度。模型与每段传输文件的哈希见 [models.json](models.json)。
+文件保存在 `weights/`。下载器自动拼接 ViT-H 分片并校验完整 `.pth` 的 SHA256。模型与分片的哈希见 [models.json](models.json)。
 
 ## 3. 评估
 
@@ -34,11 +34,11 @@ python download_models.py --model tinysam
 python evaluate.py --model tinysam --checkpoint weights/tinysam_prompt_adaptive_v1.pth --dataset coco --data-root datasets/coco --output runs/tinysam-coco
 ```
 
-将 `--dataset` 改为 `lvis` 或 `sa1b` 即可。用 `--gpu 1` 选择显卡。用 `--dry-run` 检查数据覆盖；`--max-images 1` 用于明确标注的小样本检查。
+用 `--dataset lvis` 或 `--dataset sa1b` 切换数据集，用 `--gpu 1` 选择显卡。`--dry-run` 检查数据覆盖，`--max-images 1` 运行单图检查。
 
-协议：普通 **legacy mIoU**，中心首点，点/框各三轮，分块 64。COCO/LVIS 使用全部有效验证图与全部非 crowd 目标；SA-1B 采用官方读取器的每图最多 64 目标、按原索引播种的 `randperm` 无放回抽样。只保存逐目标数值、汇总及日志。评估使用 GT 生成初始提示、模拟纠错及评分。
+协议：采用 **legacy mIoU**，首点位于目标掩码中心，点／框各三轮，每块 64 个目标。COCO/LVIS 使用所有有效验证图和非 crowd 目标。SA-1B 使用官方读取器，每图最多采样 64 个目标，以原图索引为随机种子进行无放回抽样。真实标注用于生成初始提示、模拟纠错和评分。
 
-结果保存在 `runs/.../summary.json`，检查记录保存在 `verified.json`。不保存预测图片或掩码。
+评估输出包括 `summary.json`、逐目标数值、日志和 `verified.json`。导出掩码和叠加图可用 `generate.py`。
 
 数据布局：
 
@@ -53,11 +53,11 @@ datasets/sa1b/
   annotations/val/*.json
 ```
 
-已有 `coco/trainval/` 合并图目录也可直接使用。LVIS 只评估 `lvis_v1_val.json`，它包含来自 COCO train2017 与 val2017 的图像。
+也可使用合并图像目录 `coco/trainval/`。LVIS 的 `lvis_v1_val.json` 包含 COCO train2017 和 val2017 图像。
 
 ## 4. 训练并自动合并
 
-拟合、校准、权重选择全部来自 **SA-1B train**，使用固定的 3500 图与不重叠的 2900/300/300 划分。首点拟合 1500 图；后续解码器/比较器使用 256/64/32 图。外部验证标签不参与训练。
+拟合、校准和权重选择使用 **SA-1B 训练集**。固定的 3500 张图像划分为互不重叠的 2900／300／300 张。首点模块用 1500 张图像拟合；后续解码器和比较器阶段使用 256／64／32 张。
 
 ```bash
 python prepare_data.py --source datasets/sa1b --output datasets/sa1b_train3500
@@ -100,9 +100,9 @@ mask, logits, choice = predictor.predict(box=[100, 80, 350, 300])
 python generate.py --checkpoint weights/tinysam_prompt_adaptive_v1.pth --image example.jpg --method fsd --grid 32 --output runs/everything
 ```
 
-工作台提供 Point、Box、Everything 三种模式。点／框模式仅使用四个带真实标注的精选样例。先运行初始提示，再用左侧按钮逐次加入两个预设前景纠错点；每个阶段并排比较原版与改进输出及真实目标 IoU。使用上一结果／下一结果可以回看已保存的图片、提示和 IoU。展示样例和提示坐标经过筛选，完整数据集平均指标另外列出。
+工作台提供 Point、Box、Everything 三种模式。点／框模式提供四个带标注的精选样例。先运行初始提示，再逐次加入两个预设前景纠错点。每个阶段并排显示原版与精化结果以及目标 IoU；用上一结果／下一结果回看各轮。
 
-Everything 保留图片上传，固定左侧 SAM ViT-H / Dense、右侧 FSD-SAM / ViT-H，一次运行两条路径并分别显示真实毫秒耗时。流程动画独立于推理计时。
+Everything 支持上传图片。一次运行即可比较左侧 SAM ViT-H / Dense 和右侧 FSD-SAM / ViT-H 的掩码与实测耗时。**How FSD works** 展示网格点筛选和掩码生成流程。
 
 [代码](https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM) · [在线 Demo](https://huggingface.co/spaces/thirteen7/Rethinking-Lightweight-SAM) · [项目网页](https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/)
 
@@ -118,7 +118,7 @@ python demo/space/app.py
 
 ## 实验结果
 
-以下数值逐项参照所提供的论文 `main.pdf` 表 1、3、5–7（第 11–14 页），交互指标为普通 legacy IoU (%)。初始提示为一个前景中心点或一个 GT 框；+1/+2 指在初始提示上累计增加一次／两次纠错点击。差值直接采用论文中未舍入数值计算的结果。**† 历史参考基线：** SA-11K 的 MobileSAM，以及 LVIS／SA-11K 的 ViT-H 原版数值来自历史图表，不视为本研究新做的配对对照，见论文附录 E。
+交互结果报告逐实例平均 legacy IoU（%）。初始提示为掩码中心的前景点或真实标注框；+1／+2 表示累计添加一／两次纠错点击。增益以未舍入数值计算。**† 历史基线：** SA-11K 的 MobileSAM，以及 LVIS 和 SA-11K 的 SAM ViT-H。
 
 ### 点提示：初始与纠错后
 
@@ -175,7 +175,7 @@ python demo/space/app.py
 | SAM ViT-H / Dense | 6,067 | 1.00× | 48.322 | +0.000 |
 | SAM ViT-H / FSD-SAM | 3,043 | 1.99× | 48.237 | -0.085 |
 
-COCO100：100 张 COCO val2017 图像／709 个目标；NVIDIA RTX 5060 Ti，FP32，32 × 32 网格，64 提示／批。加速比和 ΔAR 均以同一骨干的 Dense 为基准。论文基准平均值与 Demo 实测耗时分别展示。[完整结果](docs/results.md#segment-everything-timing)包含 Hierarchical、两项 IoU 指标和完成解码的平均点数。
+在 COCO100 上，FSD-SAM 将 MobileSAM 加速至 **2.97×**，AR@300 与 Dense 同为 **33.935%**。该评估使用 100 张 COCO val2017 图像、709 个目标、NVIDIA RTX 5060 Ti、FP32、32 × 32 网格和每批 64 个提示。加速比和 ΔAR 以同一骨干的 Dense 为基准。[完整结果](docs/results.md#segment-everything-timing)还包括 Hierarchical、两项 IoU 指标和完成解码的平均点数。
 
 ## 许可与致谢
 

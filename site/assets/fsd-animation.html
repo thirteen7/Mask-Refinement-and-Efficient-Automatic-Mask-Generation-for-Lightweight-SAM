@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>FSD-SAM: see the selected prompt positions</title>
-  <link rel="stylesheet" href="fsd-animation.css"><script src="fsd-animation.js" defer></script>
+  <link rel="stylesheet" href="fsd-animation.css"><script src="fsd-animation.js?v=refinement-fsd" defer></script>
 </head>
 <body>
   <header><div><span class="eyebrow">SEGEVERY / SPATIAL PROCESS COMPARISON</span><h1>See exactly which points finish.</h1></div><p>The same two-dimensional prompt grid. Dense SAM completes every point; FSD previews all points and completes the selected ones.</p></header>
@@ -39,6 +39,6 @@
   <div class="point-inspector" id="point-inspector" aria-live="polite">Click either point map to compare the same position. Arrow keys also move between points.</div>
   <div class="explanation" role="status" aria-live="polite"><strong id="step-title"></strong><p id="step-description"></p></div>
   <div class="toolbar"><button class="primary" id="replay">↻ Replay comparison</button><button id="pause">Play</button><div class="steps" role="group" aria-label="Animation steps"><button data-step="0" aria-pressed="true">1 · Encode</button><button data-step="1" aria-pressed="false">2 · Factors</button><button data-step="2" aria-pressed="false">3 · Select points</button><button data-step="3" aria-pressed="false">4 · Complete</button><button data-step="4" aria-pressed="false">5 · Masks</button></div></div>
-  <p class="footnote" id="footnote">Point positions and selection come from an actual inference run. Animation playback illustrates the processing order; its duration does not represent inference time.</p>
+  <p class="footnote" id="footnote">Playback follows the point coordinates and selections recorded during inference.</p>
 </body>
 </html>
