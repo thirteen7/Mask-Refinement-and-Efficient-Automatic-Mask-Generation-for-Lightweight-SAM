@@ -392,7 +392,7 @@ def build_demo(project):
                 gr.Markdown('Follow the same two-dimensional grid through encoding, preview selection and mask completion. After an Everything run, this diagram uses the actual points selected on your image.',elem_id='flow-introduction')
                 diagram = gr.HTML(fsd_walkthrough(),elem_id='fsd-workspace')
             with gr.Tab('Paper results'):
-                gr.Markdown(paper_results(project))
+                gr.Markdown(paper_results(project),elem_id='paper-results')
         gr.HTML('<div class="studio-footer"><b>'+title+'</b><a href="https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/blob/main/docs/results.md" target="_blank" rel="noopener">Paper results ↗</a></div>')
         outputs = [session,image,original,refined,status,stats,table,selected,diagram,pair_left,pair_right,times,pair_details,point_scores,
             stage_title,add_first,add_second,button,previous_result,next_result,correction_actions,every_controls,point_controls,inspector,prompt_group,pair_group,model,curated_gallery,every_gallery]
