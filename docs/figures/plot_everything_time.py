@@ -18,6 +18,8 @@ MUTED = '#737887'
 def plot_timing():
     data = json.loads((ROOT / 'site/paper-everything.json').read_text(encoding='utf-8'))
     rows = {(r['backbone'], r['policy']): r for r in data['rows']}
+    fsd_rows = [row for row in data['rows'] if row['policy'] == 'FSD-SAM']
+    source = f"Paper Table {data['source']['table']}"
     plt.rcParams.update({'font.family': 'DejaVu Sans', 'text.color': INK,
                          'svg.fonttype': 'none', 'svg.hashsalt': 'fsd-paper-timing'})
     fig = plt.figure(figsize=(14, 6.5), facecolor='white')
@@ -40,38 +42,41 @@ def plot_timing():
     ax.axhspan(-.48, .48, color='#f7f3ff', zorder=0)
     fig.text(.79, .79, 'Speedup', fontsize=12, weight='bold')
     fig.text(.915, .79, 'Time saved', fontsize=12, weight='bold', ha='center')
-    for y, backbone in enumerate(('SAM ViT-H', 'TinySAM', 'EdgeSAM')):
-        dense, fsd = rows[backbone, 'Dense'], rows[backbone, 'FSD-SAM']
-        ax.text(-140, y, backbone, fontsize=13, ha='right', va='center',
-                weight='bold' if y == 0 else 'normal', clip_on=False)
+    for position, fsd in enumerate(fsd_rows):
+        backbone = fsd['backbone']
+        dense = rows[backbone, 'Dense']
+        ax.text(-140, position, backbone, fontsize=13, ha='right', va='center',
+                weight='bold' if position == 0 else 'normal', clip_on=False)
         for row, offset, color in ((dense, -.19, BASELINE), (fsd, .19, VIOLET)):
             value = row['milliseconds']
-            ax.barh(y + offset, value, height=.27, color=color)
-            ax.text(value + 70, y + offset, f'{value:,} ms', fontsize=12, va='center',
+            ax.barh(position + offset, value, height=.27, color=color)
+            ax.text(value + 70, position + offset, f'{value:,} ms', fontsize=12, va='center',
                     color=VIOLET if offset > 0 else MUTED,
                     weight='bold' if offset > 0 else 'normal')
         # Speedups retain the paper's precision; time savings use its displayed ms.
-        relative_y = .27 + .5 * (2.6 - y) / 3.2
+        relative_y = .27 + .5 * (2.6 - position) / 3.2
         fig.text(.815, relative_y, f"{fsd['speedup']:.2f}×", fontsize=23, color=VIOLET,
                  weight='bold', ha='center', va='center')
         saved = 100 * (1 - fsd['milliseconds'] / dense['milliseconds'])
         fig.text(.915, relative_y, f'{saved:.1f}%', fontsize=17, color=INK, ha='center', va='center')
     fig.text(.035, .153,
-             'Paper Table 7 · COCO100 development subset (100 images / 709 targets) · NVIDIA RTX 5060 Ti · FP32 · 32 × 32 grid · batch 64',
+             f'{source} · COCO100 development subset (100 images / 709 targets) · NVIDIA RTX 5060 Ti · FP32 · 32 × 32 grid · batch 64',
              fontsize=10.5, color=MUTED)
     fig.text(.035, .103,
              'CUDA-synchronized full generation, including image encoding and mask processing · 3 warm-ups · 3 timed repetitions per image',
              fontsize=10.5, color=MUTED)
-    fig.text(.035, .053,
-             'AR@300 change vs Dense: ViT-H −0.085 pp · TinySAM −0.465 pp · EdgeSAM −0.240 pp. Full policy comparisons: docs/results.md.',
-             fontsize=10.5, color=MUTED)
+    changes = ' · '.join(f"{row['backbone']} {row['delta_ar']:+.3f} pp" for row in fsd_rows)
+    fig.text(.035, .053, f'AR@300 change vs Dense: {changes}.', fontsize=10.5, color=MUTED)
     OUTPUT.mkdir(parents=True, exist_ok=True)
     title = 'Dense SAM versus FSD-SAM end-to-end inference time'
-    description = 'Paper Table 7; data: site/paper-everything.json; COCO100 development subset.'
+    description = f'{source}; data: site/paper-everything.json; COCO100 development subset.'
     fig.savefig(OUTPUT / 'fsd-time-comparison.png', dpi=150, metadata={'Title': title, 'Description': description})
-    fig.savefig(OUTPUT / 'fsd-time-comparison.svg', metadata={'Title': title, 'Description': description, 'Date': None})
+    svg_path = OUTPUT / 'fsd-time-comparison.svg'
+    fig.savefig(svg_path, metadata={'Title': title, 'Description': description, 'Date': None})
+    svg_path.write_text('\n'.join(line.rstrip() for line in svg_path.read_text(encoding='utf-8').splitlines()) + '\n',
+                        encoding='utf-8', newline='\n')
     plt.close(fig)
-    print('Rendered ViT-H, TinySAM and EdgeSAM Dense / FSD-SAM timing')
+    print('Rendered Dense / FSD-SAM timing for ' + ', '.join(row['backbone'] for row in fsd_rows))
 
 
 if __name__ == '__main__':

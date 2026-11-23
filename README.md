@@ -180,22 +180,22 @@ The bars compare the initial prompt; the adjacent columns show gains at all thre
 
 ### Segment Everything: Dense SAM versus FSD-SAM
 
-![Dense SAM versus FSD-SAM timing on ViT-H, TinySAM and EdgeSAM](site/assets/results/fsd-time-comparison.png)
+![Dense versus FSD-SAM timing on TinySAM, MobileSAM and SAM ViT-H](site/assets/results/fsd-time-comparison.png)
 
 [Vector figure (SVG)](site/assets/results/fsd-time-comparison.svg)
 
 | Backbone / policy | ms/image ↓ | Speedup | AR@300 (%) ↑ | ΔAR (pp) |
 |---|---:|---:|---:|---:|
-| SAM ViT-H / Dense | 6,067 | 1.00× | 48.322 | — |
-| SAM ViT-H / FSD-SAM | 3,043 | 1.99× | 48.237 | -0.085 |
-| TinySAM / Dense | 3,423 | 1.00× | 15.797 | — |
+| TinySAM / Dense | 3,423 | 1.00× | 15.797 | +0.000 |
 | TinySAM / FSD-SAM | 1,274 | 2.69× | 15.331 | -0.465 |
-| EdgeSAM / Dense | 3,772 | 1.00× | 29.803 | — |
-| EdgeSAM / FSD-SAM | 1,350 | 2.79× | 29.563 | -0.240 |
+| MobileSAM / Dense | 3,503 | 1.00× | 33.935 | +0.000 |
+| MobileSAM / FSD-SAM | 1,181 | 2.97× | 33.935 | +0.000 |
+| SAM ViT-H / Dense | 6,067 | 1.00× | 48.322 | +0.000 |
+| SAM ViT-H / FSD-SAM | 3,043 | 1.99× | 48.237 | -0.085 |
 
-Paper Table 7: COCO100 **development subset**, 100 images / 709 targets, NVIDIA RTX 5060 Ti, FP32, 32 × 32 grid, 64 prompts/batch. Three warm-ups; each image is timed three times, with quality from repetition 0. CUDA-synchronized end-to-end generation includes encoding and mask processing. Image reading, model loading, compilation, warm-up, disk writes and GT evaluation are excluded. Seconds in the paper are converted to milliseconds (×1000). These dataset averages are separate from the live demo’s current-image measurements and portable decoder settings.
+COCO100: 100 COCO val2017 images / 709 targets, NVIDIA RTX 5060 Ti, FP32, 32 × 32 grid, 64 prompts/batch. Speedup and ΔAR are relative to Dense on the same backbone. These benchmark averages are separate from live demo timings.
 
-All three backbones, stages and timing policies appear in [docs/results.md](docs/results.md).
+The [full COCO100 table](docs/results.md#segment-everything-timing) includes Hierarchical, both IoU metrics and completed points.
 
 ## License and acknowledgments
 

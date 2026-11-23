@@ -16,6 +16,10 @@ license: other
 [Project page](https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/) ·
 [Code and models](https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM)
 
+**Paper results** shows the COCO100 benchmark for TinySAM, MobileSAM and SAM ViT-H,
+each with Dense, Hierarchical and FSD-SAM. See the [same benchmark on the project page](https://thirteen7.github.io/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/#fsd-results).
+Its dataset averages are separate from the live ViT-H measurements below.
+
 Press **Run both models** in **Everything** to generate a left-hand **SAM ViT-H / Dense SAM**
 result and a right-hand **FSD-SAM / ViT-H** result, with measured milliseconds for each.
 Both paths use the same frozen ViT-H weights, input image, sampling grid, FP32 precision,

@@ -270,6 +270,33 @@ def browse_workspace(state, offset):
     return dict(state,prompt_stage=index,points=copy.deepcopy(row['points']),box=copy.deepcopy(row['box']))
 
 
+def paper_results(project):
+    benchmark = json.loads((project/'site/paper-everything.json').read_text(encoding='utf-8'))
+    lines = [
+        '## FSD-SAM on COCO100',
+        '',
+        'TinySAM, MobileSAM and SAM ViT-H each compare Dense, Hierarchical and FSD-SAM. '
+        'The live studio separately compares Dense and FSD-SAM on SAM ViT-H for the current image.',
+        '',
+        '| Backbone / method | ms/image | Speedup | AR@300 (%) | ΔAR (pp) | Best IoU (%) | 1-to-1 IoU (%) | Points completed |',
+        '| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |',
+    ]
+    for row in benchmark['rows']:
+        lines.append(
+            f"| {row['backbone']} / {row['policy']} | {row['milliseconds']:,} | {row['speedup']:.2f}× "
+            f"| {row['ar300']:.3f} | {row['delta_ar']:+.3f} | {row['best_iou']:.3f} "
+            f"| {row['one_to_one_iou']:.3f} | {row['points_completed']:.1f} |"
+        )
+    lines.extend([
+        '',
+        f"{benchmark['images']} COCO val2017 images · {benchmark['targets']} targets · "
+        f"{benchmark['device']} · {benchmark['precision']} · "
+        f"{benchmark['grid']} × {benchmark['grid']} grid · batch {benchmark['points_per_batch']}.",
+        'Speedup and ΔAR are relative to Dense on the same backbone.',
+    ])
+    return '\n'.join(lines)
+
+
 def build_demo(project):
     torch.set_num_threads(4 if DEVICE=='cpu' else 2)
     torch.backends.cuda.matmul.allow_tf32 = False
@@ -364,6 +391,8 @@ def build_demo(project):
             with gr.Tab('How FSD works'):
                 gr.Markdown('Follow the same two-dimensional grid through encoding, preview selection and mask completion. After an Everything run, this diagram uses the actual points selected on your image.',elem_id='flow-introduction')
                 diagram = gr.HTML(fsd_walkthrough(),elem_id='fsd-workspace')
+            with gr.Tab('Paper results'):
+                gr.Markdown(paper_results(project))
         gr.HTML('<div class="studio-footer"><b>'+title+'</b><a href="https://github.com/thirteen7/Mask-Refinement-and-Efficient-Automatic-Mask-Generation-for-Lightweight-SAM/blob/main/docs/results.md" target="_blank" rel="noopener">Paper results ↗</a></div>')
         outputs = [session,image,original,refined,status,stats,table,selected,diagram,pair_left,pair_right,times,pair_details,point_scores,
             stage_title,add_first,add_second,button,previous_result,next_result,correction_actions,every_controls,point_controls,inspector,prompt_group,pair_group,model,curated_gallery,every_gallery]

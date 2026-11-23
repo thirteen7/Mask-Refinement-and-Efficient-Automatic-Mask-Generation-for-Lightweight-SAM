@@ -162,20 +162,20 @@ python demo/space/app.py
 
 ### Segment Everything：Dense SAM 与 FSD-SAM 时间对比
 
-![Dense SAM 与 FSD-SAM 在 ViT-H、TinySAM、EdgeSAM 上的整图分割耗时对比](site/assets/results/fsd-time-comparison.png)
+![Dense 与 FSD-SAM 在 TinySAM、MobileSAM、SAM ViT-H 上的整图分割耗时对比](site/assets/results/fsd-time-comparison.png)
 
 [矢量图 (SVG)](site/assets/results/fsd-time-comparison.svg)
 
 | 骨干 / 策略 | ms/图 ↓ | 加速比 | AR@300 (%) ↑ | ΔAR (pp) |
 |---|---:|---:|---:|---:|
-| SAM ViT-H / Dense | 6,067 | 1.00× | 48.322 | — |
-| SAM ViT-H / FSD-SAM | 3,043 | 1.99× | 48.237 | -0.085 |
-| TinySAM / Dense | 3,423 | 1.00× | 15.797 | — |
+| TinySAM / Dense | 3,423 | 1.00× | 15.797 | +0.000 |
 | TinySAM / FSD-SAM | 1,274 | 2.69× | 15.331 | -0.465 |
-| EdgeSAM / Dense | 3,772 | 1.00× | 29.803 | — |
-| EdgeSAM / FSD-SAM | 1,350 | 2.79× | 29.563 | -0.240 |
+| MobileSAM / Dense | 3,503 | 1.00× | 33.935 | +0.000 |
+| MobileSAM / FSD-SAM | 1,181 | 2.97× | 33.935 | +0.000 |
+| SAM ViT-H / Dense | 6,067 | 1.00× | 48.322 | +0.000 |
+| SAM ViT-H / FSD-SAM | 3,043 | 1.99× | 48.237 | -0.085 |
 
-论文表 7：COCO100 开发子集，100 图／709 目标；NVIDIA RTX 5060 Ti，FP32，32 × 32 网格，64 提示／批。每种配置预热 3 次，每图计时 3 次，质量使用第 0 次结果；CUDA 同步计时，包括图像编码和完整掩码生成。排除图片读取、模型加载、编译、预热、写盘及 GT 评估。论文的秒／图乘以 1000 转为毫秒／图。该开发子集平均时间与 Demo 当前图片的实测耗时分别显示。完整结果见 [docs/results.md](docs/results.md)。
+COCO100：100 张 COCO val2017 图像／709 个目标；NVIDIA RTX 5060 Ti，FP32，32 × 32 网格，64 提示／批。加速比和 ΔAR 均以同一骨干的 Dense 为基准。论文基准平均值与 Demo 实测耗时分别展示。[完整结果](docs/results.md#segment-everything-timing)包含 Hierarchical、两项 IoU 指标和完成解码的平均点数。
 
 ## 许可与致谢
 

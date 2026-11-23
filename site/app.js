@@ -220,7 +220,13 @@ function wireBenchmarks() {
     const cells=['point','box'].flatMap(prompt=>[0,1,2].map(stage=>`<td class="paired-result-cell"><span>${data.original[model][prompt][stage].toFixed(2)} → <b>${data[model][prompt][stage].toFixed(2)}</b></span><small>+${data.gains[model][prompt][stage].toFixed(2)} pp${historical?' †':''}</small></td>`)).join('');
     return `<tr><td><b>${data.label}</b><span class="table-model">${names[model]}${historical?' †':''}</span></td>${cells}</tr>`;
   })).join('');
-  $("#paper-every-table").innerHTML=paperTiming.rows.filter(row=>row.backbone==='SAM ViT-H'&&row.policy!=='Hierarchical').map(row=>`<tr><td><b>${row.policy==='Dense'?'SAM ViT-H / Dense':'FSD-SAM / ViT-H'}</b></td><td class="${row.policy==='FSD-SAM'?'ours-cell':''}">${number(row.milliseconds)} ms</td><td>${row.speedup.toFixed(2)}×</td><td>${row.ar300.toFixed(3)}%</td><td>${row.delta_ar===null?'—':row.delta_ar.toFixed(3)+' pp'}</td></tr>`).join('');
+  const deltaAR = value => `${value >= 0 ? '+' : '−'}${Math.abs(value).toFixed(3)}`;
+  $("#paper-every-summary").innerHTML = paperTiming.rows.filter(row => row.policy === 'FSD-SAM').map(row =>
+    `<div><span>${row.backbone} / FSD-SAM</span><b>${row.speedup.toFixed(2)}<small>× vs Dense</small></b><span>${deltaAR(row.delta_ar)} pp ΔAR</span></div>`
+  ).join('');
+  $("#paper-every-table").innerHTML = paperTiming.rows.map(row =>
+    `<tr><th scope="row">${row.backbone}<span class="table-model">${row.policy}</span></th><td class="${row.policy === 'FSD-SAM' ? 'ours-cell' : ''}">${number(row.milliseconds)}</td><td>${row.speedup.toFixed(2)}×</td><td>${row.ar300.toFixed(3)}</td><td>${deltaAR(row.delta_ar)}</td><td>${row.best_iou.toFixed(3)}</td><td>${row.one_to_one_iou.toFixed(3)}</td><td>${row.points_completed.toFixed(1)}</td></tr>`
+  ).join('');
   renderBenchmarks();
 }
 function renderModels() {
@@ -349,7 +355,7 @@ async function enableLive() {
   $("#reset-prompts").addEventListener("click", () => resetLive().catch(error => toast(error.message)));
 }
 async function start() {
-  [records, benchmarks, manifest, config, everything, everyComparison, paperTiming] = await Promise.all([json("examples.json"), json("benchmarks.json"), json("models.json"), json("config.json"), json("everything.json"), json("every-comparison.json"), json("paper-everything.json")]);
+  [records, benchmarks, manifest, config, everything, everyComparison, paperTiming] = await Promise.all([json("examples.json"), json("benchmarks.json"), json("models.json"), json("config.json"), json("everything.json"), json("every-comparison.json"), json("paper-everything.json?v=fsd-coco100")]);
   const parameters = new URLSearchParams(location.search);
   if (parameters.get("embed") === "showcase") document.body.classList.add("embedded-explorer");
   if (["tinysam","mobilesam"].includes(parameters.get("model"))) state.model=parameters.get("model");

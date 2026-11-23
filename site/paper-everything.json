@@ -1,9 +1,8 @@
 {
   "source": {
-    "document": "main.pdf",
-    "sha256": "60997914209376b776a5372a1ed4053670ef9773de0f90b8de6a5a1ff7398438",
-    "table": 7,
-    "page": 14
+    "document": "main_en.tex",
+    "table": 6,
+    "label": "tab:fsd-coco100"
   },
   "dataset": "COCO100 development subset",
   "images": 100,
@@ -31,7 +30,10 @@
       "milliseconds": 3423,
       "speedup": 1,
       "ar300": 15.797,
-      "delta_ar": null
+      "delta_ar": 0,
+      "best_iou": 29.550,
+      "one_to_one_iou": 28.877,
+      "points_completed": 1024.0
     },
     {
       "backbone": "TinySAM",
@@ -39,7 +41,10 @@
       "milliseconds": 1808,
       "speedup": 1.89,
       "ar300": 16.164,
-      "delta_ar": 0.367
+      "delta_ar": 0.367,
+      "best_iou": 29.804,
+      "one_to_one_iou": 29.135,
+      "points_completed": 618.1
     },
     {
       "backbone": "TinySAM",
@@ -47,31 +52,43 @@
       "milliseconds": 1274,
       "speedup": 2.69,
       "ar300": 15.331,
-      "delta_ar": -0.465
+      "delta_ar": -0.465,
+      "best_iou": 29.063,
+      "one_to_one_iou": 28.382,
+      "points_completed": 417.1
     },
     {
-      "backbone": "EdgeSAM",
+      "backbone": "MobileSAM",
       "policy": "Dense",
-      "milliseconds": 3772,
+      "milliseconds": 3503,
       "speedup": 1,
-      "ar300": 29.803,
-      "delta_ar": null
+      "ar300": 33.935,
+      "delta_ar": 0,
+      "best_iou": 49.108,
+      "one_to_one_iou": 48.253,
+      "points_completed": 1024.0
     },
     {
-      "backbone": "EdgeSAM",
+      "backbone": "MobileSAM",
       "policy": "Hierarchical",
-      "milliseconds": 2202,
-      "speedup": 1.71,
-      "ar300": 29.337,
-      "delta_ar": -0.465
+      "milliseconds": 1510,
+      "speedup": 2.32,
+      "ar300": 33.230,
+      "delta_ar": -0.705,
+      "best_iou": 48.479,
+      "one_to_one_iou": 47.458,
+      "points_completed": 495.5
     },
     {
-      "backbone": "EdgeSAM",
+      "backbone": "MobileSAM",
       "policy": "FSD-SAM",
-      "milliseconds": 1350,
-      "speedup": 2.79,
-      "ar300": 29.563,
-      "delta_ar": -0.24
+      "milliseconds": 1181,
+      "speedup": 2.97,
+      "ar300": 33.935,
+      "delta_ar": 0,
+      "best_iou": 49.122,
+      "one_to_one_iou": 48.231,
+      "points_completed": 312.3
     },
     {
       "backbone": "SAM ViT-H",
@@ -79,7 +96,10 @@
       "milliseconds": 6067,
       "speedup": 1,
       "ar300": 48.322,
-      "delta_ar": null
+      "delta_ar": 0,
+      "best_iou": 62.198,
+      "one_to_one_iou": 61.749,
+      "points_completed": 1024.0
     },
     {
       "backbone": "SAM ViT-H",
@@ -87,7 +107,10 @@
       "milliseconds": 2966,
       "speedup": 2.05,
       "ar300": 46.093,
-      "delta_ar": -2.228
+      "delta_ar": -2.228,
+      "best_iou": 60.189,
+      "one_to_one_iou": 59.607,
+      "points_completed": 381.5
     },
     {
       "backbone": "SAM ViT-H",
@@ -95,7 +118,10 @@
       "milliseconds": 3043,
       "speedup": 1.99,
       "ar300": 48.237,
-      "delta_ar": -0.085
+      "delta_ar": -0.085,
+      "best_iou": 62.043,
+      "one_to_one_iou": 61.561,
+      "points_completed": 352.4
     }
   ]
 }

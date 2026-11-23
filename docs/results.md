@@ -46,27 +46,27 @@ The bars compare the initial prompt; the adjacent columns show gains at all thre
 
 ## Segment Everything timing
 
-![Dense SAM versus FSD-SAM timing on ViT-H, TinySAM and EdgeSAM](../site/assets/results/fsd-time-comparison.png)
+![Dense versus FSD-SAM timing on TinySAM, MobileSAM and SAM ViT-H](../site/assets/results/fsd-time-comparison.png)
 
 [Vector figure (SVG)](../site/assets/results/fsd-time-comparison.svg)
 
-| Backbone / policy | ms/image ↓ | Speedup | AR@300 (%) ↑ | ΔAR (pp) |
-|---|---:|---:|---:|---:|
-| TinySAM / Dense | 3,423 | 1.00× | 15.797 | — |
-| TinySAM / Hierarchical | 1,808 | 1.89× | 16.164 | +0.367 |
-| TinySAM / FSD-SAM | 1,274 | 2.69× | 15.331 | -0.465 |
-| EdgeSAM / Dense | 3,772 | 1.00× | 29.803 | — |
-| EdgeSAM / Hierarchical | 2,202 | 1.71× | 29.337 | -0.465 |
-| EdgeSAM / FSD-SAM | 1,350 | 2.79× | 29.563 | -0.240 |
-| SAM ViT-H / Dense | 6,067 | 1.00× | 48.322 | — |
-| SAM ViT-H / Hierarchical | 2,966 | 2.05× | 46.093 | -2.228 |
-| SAM ViT-H / FSD-SAM | 3,043 | 1.99× | 48.237 | -0.085 |
+| Backbone / method | ms/image | Speedup | AR@300 (%) | ΔAR (pp) | Best IoU (%) | 1-to-1 IoU (%) | Points completed |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| TinySAM / Dense | 3,423 | 1.00× | 15.797 | +0.000 | 29.550 | 28.877 | 1024.0 |
+| TinySAM / Hierarchical | 1,808 | 1.89× | 16.164 | +0.367 | 29.804 | 29.135 | 618.1 |
+| TinySAM / FSD-SAM | 1,274 | 2.69× | 15.331 | -0.465 | 29.063 | 28.382 | 417.1 |
+| MobileSAM / Dense | 3,503 | 1.00× | 33.935 | +0.000 | 49.108 | 48.253 | 1024.0 |
+| MobileSAM / Hierarchical | 1,510 | 2.32× | 33.230 | -0.705 | 48.479 | 47.458 | 495.5 |
+| MobileSAM / FSD-SAM | 1,181 | 2.97× | 33.935 | +0.000 | 49.122 | 48.231 | 312.3 |
+| SAM ViT-H / Dense | 6,067 | 1.00× | 48.322 | +0.000 | 62.198 | 61.749 | 1024.0 |
+| SAM ViT-H / Hierarchical | 2,966 | 2.05× | 46.093 | -2.228 | 60.189 | 59.607 | 381.5 |
+| SAM ViT-H / FSD-SAM | 3,043 | 1.99× | 48.237 | -0.085 | 62.043 | 61.561 | 352.4 |
 
-Paper Table 7: COCO100 **development subset**, 100 images / 709 targets, NVIDIA RTX 5060 Ti, FP32, 32 × 32 grid, 64 prompts/batch. Three warm-ups; each image is timed three times, with quality from repetition 0. CUDA-synchronized end-to-end generation includes encoding and mask processing. Image reading, model loading, compilation, warm-up, disk writes and GT evaluation are excluded. Seconds in the paper are converted to milliseconds (×1000). These dataset averages are separate from the live demo’s current-image measurements and portable decoder settings.
+COCO100: the 100 COCO val2017 images with the smallest IDs and 709 non-crowd instances. NVIDIA RTX 5060 Ti, FP32, 32 × 32 grid, 64 prompts/batch. Speedup and ΔAR are relative to Dense on the same backbone and use unrounded source values. After three warm-ups per image, each image is timed three times, with quality from the first timed run. CUDA-synchronized end-to-end generation includes encoding and mask processing. Image reading, model loading, compilation, warm-up, disk writes and GT evaluation are excluded. Paper seconds are converted to milliseconds. These dataset averages are separate from the live demo’s measurements.
 
 ## Source
 
-The supplied manuscript SHA256 is `60997914209376b776a5372a1ed4053670ef9773de0f90b8de6a5a1ff7398438`. Displayed interaction values use the paper’s two decimal places; timing and AR use Table 7 precision. [Machine-readable interaction values](../site/benchmarks.json) · [Machine-readable timing values](../site/paper-everything.json). Curated image IoUs are recomputed against their own target annotations and are separate from these aggregate values.
+Displayed interaction values use the paper’s two decimal places. Automatic mask generation values follow the current manuscript’s COCO100 table. [Machine-readable interaction values](../site/benchmarks.json) · [Machine-readable COCO100 results](../site/paper-everything.json). Curated image IoUs are recomputed against their own target annotations and are separate from these aggregate values.
 
 The PNG and SVG figures are generated from `site/benchmarks.json` (interaction) and `site/paper-everything.json` (timing). With matplotlib installed, run `python docs/figures/plot_prompt_results.py` or `python docs/figures/plot_everything_time.py`. The interaction figures share a 0–100 IoU axis and 0–12 pp gain color scale; the timing figure starts at 0 ms.
 
