@@ -337,7 +337,8 @@ def build_demo(project):
         });
         new MutationObserver(sync).observe(document.body,{childList:true,subtree:true});sync();
     }""".replace('ORIGIN',origin)
-    with gr.Blocks(title=title,css=css,js=js,theme=gr.themes.Base(primary_hue='violet',neutral_hue='slate'),delete_cache=(900,900)) as demo:
+    viewport_style = '<style>@media(max-width:650px){.gradio-container{max-width:100vw!important}}</style>'
+    with gr.Blocks(title=title,css=css,js=js,head=viewport_style,theme=gr.themes.Base(primary_hue='violet',neutral_hue='slate'),delete_cache=(900,900)) as demo:
         gr.HTML(header)
         with gr.Tabs(elem_id='studio-tabs'):
             with gr.Tab('Live studio'):
